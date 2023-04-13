@@ -18,5 +18,4 @@ class Profile(models.Model):
      phone_no = models.CharField(max_length = 10)
 
          
-     USERNAME_FIELD = "email"
-     REQUIRED_FIELDS = ['first_name','last_name']
+   

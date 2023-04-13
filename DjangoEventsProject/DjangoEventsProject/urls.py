@@ -15,8 +15,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
+from django.conf import settings
+from Accounts.views import *
+from Events.views import *
+from rest_framework.routers import DefaultRouter
+from django.views.decorators.csrf import csrf_exempt
+
+router = DefaultRouter()
+router.register('eventss', EventViewSet, basename='Events')
+router.register('searchevents', SearchEventsViewSet, basename='Events')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+     path('',include(router.urls)),
+    path('login_usertoken/',login_user_token,name='loginusertoken'),
+    path('logout_usertoken/',logout_users,name='loginusertoken'),
+    path('register/',RegisteredView.as_view(),name='product-list'),
+    path('change_pass/',ChangePasswordView.as_view(),name='changepass'),
+    path('Events_Join/',Events_JoinView.as_view(),name='Events_Joins'),
+    path('event/left/<int:pk>',Leftevent.as_view(),name='left-event'),
+    path('Events_Joins/',EventslistJoinView.as_view(),name='Events_Joins'),
+    path('api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+  
 ]
