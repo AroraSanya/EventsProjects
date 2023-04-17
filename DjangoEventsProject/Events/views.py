@@ -18,14 +18,19 @@ from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics
 from .serializers import *
-
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.db.models import signals
+from django.core.mail import send_mail
+from django.conf import settings
+from django.http import JsonResponse
 
 
 class Events_JoinView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class=JoineventsSerializer
    
-    
+
     def create(self, request): 
              
             request.data['user'] = request.user.id     
@@ -35,29 +40,31 @@ class Events_JoinView(generics.CreateAPIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.error_messages,
                             status=status.HTTP_400_BAD_REQUEST)
+    
 
+@receiver(post_save, sender=Join_events)
+def send_email_on_save(sender, instance, created, **kwargs):
+    if created:
+        subject = 'New object created'
+        message = f'A new object with ID {instance.id} was created.'
+        email_from=settings.EMAIL_HOST_USER
+        recipient_list = [instance.user.email]
+        send_mail(subject, message, None, recipient_list, fail_silently=False)
 
 class Leftevent(APIView):
      def post(self, request,pk):
-            event=Join_events.objects.get(event_id=pk, user_id =request.user.id )
+            print(pk)
+            event=Join_events.objects.get(event_id=pk, user_id=request.user.id )
             event.is_registered=False
             event.save()
             return Response({"msg":"event_left Successfully"})
-
-     
-
-
 
      
 class EventViewSet(ModelViewSet):
         permission_classes = [permissions.IsAuthenticated,permissions.IsAdminUser]   
         serializer_class = EventSerializer
         queryset = Event.objects.all()
-        
-        
-       
-
-
+            
 class EventFilterSet(django_filters.FilterSet):
     title= django_filters.CharFilter(lookup_expr='contains')
 
@@ -77,5 +84,11 @@ class EventslistJoinView(generics.ListAPIView):
     serializer_class=EventSerializer
 
 
-  
+class ReportView(APIView):
      
+     def post(self,request):
+        events = Event.objects.prefetch_related('atendees').filter(start_datetime__range=[request.data["from"], request.data["to"]])
+        serializer = ReportSerializer(events, many=True)
+        return Response({'msg': serializer.data})
+     
+

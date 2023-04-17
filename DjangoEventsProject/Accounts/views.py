@@ -18,6 +18,50 @@ from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail 
 from .serializers import *
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.db.models import signals
+from django.core.mail import send_mail
+from Events.serializers import *
+from rest_framework.generics import RetrieveAPIView,ListAPIView
+
+
+class ProfileView(ListAPIView):
+    #queryset = User.objects.all()
+    serializer_class = JoineventsSerializer
+    permission_classes = [IsAuthenticated]
+
+
+   
+    def get_queryset(self):
+        user = self.request.user
+        events = Join_events.objects.filter(user=user)
+
+        return events
+    def list(self, request, *args, **kwargs):
+        user = self.request.user
+        users =self.get_queryset()
+        events_serializer = self.get_serializer(users, many=True)
+        for u in users:
+            empty_event =[]
+            empty_event.append(u.event.title)
+        joining = empty_event
+        return Response({'id':user.id,'email':user.email,'event':joining})
+
+        # for u in users:
+        #    event=[]
+        #    print(u.event.name)
+        # events_serializer = self.get_serializer(self.get_queryset(), many=True)
+        # return Response({'msg':users})
+    """
+    email:
+    username:
+    events: [
+    netathon , 
+
+    ]
+    """
+
 
 
 def create(self,validated_data):
@@ -39,8 +83,8 @@ class RegisteredView(APIView):
     queryset=User.objects.all()
     serializer_class=UserSerializer
 
+
     def post(self, request):
-       
         serializer = ProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.create(validated_data=request.data)
@@ -48,6 +92,7 @@ class RegisteredView(APIView):
         else:
             return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
+
     
        
     
@@ -95,8 +140,6 @@ class ChangePasswordView(APIView):
             
             if serializer.is_valid():
                 return Response({"msg":"changed succesfully"})
-#                 serializer.save()
-#                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -119,17 +162,7 @@ def password_reset(sender, instance, reset_password_token, *args, **kwargs):
         # to:
         [reset_password_token.user.email]
     )
-    # def validate_old_password(self, value):
-    #     user = self.context['request'].user
-    #     if not user.check_password(value):
-    #         raise ValidationError({"old_password": "Old password is not correct"})
-    #     return value
-    # def update(self, instance, validated_data):
-    
-    #     instance.set_password(validated_data['password'])
-    #     instance.save()
-
-        # return instance
+  
     
 
        

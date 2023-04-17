@@ -28,14 +28,15 @@ router.register('searchevents', SearchEventsViewSet, basename='Events')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-     path('',include(router.urls)),
+    path('',include(router.urls)),
+    path('profile/',ProfileView.as_view(),name='profile-list'),
+    path('Report/',ReportView.as_view(),name='report'),
     path('login_usertoken/',login_user_token,name='loginusertoken'),
     path('logout_usertoken/',logout_users,name='loginusertoken'),
-    path('register/',RegisteredView.as_view(),name='product-list'),
+    path('register/',RegisteredView.as_view(),name='register'),
     path('change_pass/',ChangePasswordView.as_view(),name='changepass'),
     path('Events_Join/',Events_JoinView.as_view(),name='Events_Joins'),
     path('event/left/<int:pk>',Leftevent.as_view(),name='left-event'),
     path('Events_Joins/',EventslistJoinView.as_view(),name='Events_Joins'),
-    path('api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
-  
+    path('api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')), 
 ]

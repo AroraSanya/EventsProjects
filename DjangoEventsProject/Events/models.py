@@ -11,7 +11,7 @@ class Event(models.Model):
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
     address = models.CharField(max_length=255)
-    event_at=models.DateTimeField(null=True)
+    event_at=models.DateTimeField(auto_now=True,null=True)
     
 
     @property
@@ -29,6 +29,12 @@ class Join_events(models.Model):
     event=models.ForeignKey(Event,on_delete=models.CASCADE)
     is_registered=models.BooleanField(null=True)
     has_joined=models.DateTimeField(auto_now=True)
+
+    class Meta:
+        default_related_name = 'atendees'
+    def __str__(self) -> str:
+        return self.user.username
+
 
     
     
