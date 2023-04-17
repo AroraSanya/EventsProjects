@@ -48,19 +48,6 @@ class ProfileView(ListAPIView):
         joining = empty_event
         return Response({'id':user.id,'email':user.email,'event':joining})
 
-        # for u in users:
-        #    event=[]
-        #    print(u.event.name)
-        # events_serializer = self.get_serializer(self.get_queryset(), many=True)
-        # return Response({'msg':users})
-    """
-    email:
-    username:
-    events: [
-    netathon , 
-
-    ]
-    """
 
 
 
