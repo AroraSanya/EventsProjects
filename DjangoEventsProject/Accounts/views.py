@@ -30,13 +30,12 @@ class ProfileView(ListAPIView):
     serializer_class = JoineventsSerializer
     permission_classes = [IsAuthenticated]
 
-
-   
     def get_queryset(self):
         user = self.request.user
         events = Join_events.objects.filter(user=user)
-
         return events
+    
+
     def list(self, request, *args, **kwargs):
         user = self.request.user
         users =self.get_queryset()
