@@ -3,6 +3,8 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db.models import signals
 from django.core.mail import send_mail
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
 
 @receiver(reset_password_token_created)
 def password_reset(sender, instance, reset_password_token, *args, **kwargs):

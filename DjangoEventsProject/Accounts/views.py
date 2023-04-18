@@ -13,7 +13,6 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.dispatch import receiver
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail 
@@ -23,6 +22,7 @@ from django.db.models.signals import post_save
 from django.db.models import signals
 from Events.serializers import *
 from rest_framework.generics import RetrieveAPIView,ListAPIView
+from .signals import *
 
 
 class ProfileView(ListAPIView):
