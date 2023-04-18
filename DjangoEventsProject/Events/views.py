@@ -24,6 +24,7 @@ from django.db.models import signals
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import JsonResponse
+from .signals import *
 
 
 class Events_JoinView(generics.CreateAPIView):
@@ -41,15 +42,6 @@ class Events_JoinView(generics.CreateAPIView):
             return Response(serializer.error_messages,
                             status=status.HTTP_400_BAD_REQUEST)
     
-
-@receiver(post_save, sender=Join_events)
-def send_email_on_save(sender, instance, created, **kwargs):
-    if created:
-        subject = 'New object created'
-        message = f'A new object with ID {instance.id} was created.'
-        email_from=settings.EMAIL_HOST_USER
-        recipient_list = [instance.user.email]
-        send_mail(subject, message, None, recipient_list, fail_silently=False)
 
 class Leftevent(APIView):
      def post(self, request,pk):

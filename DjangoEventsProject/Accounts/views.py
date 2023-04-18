@@ -21,7 +21,6 @@ from .serializers import *
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db.models import signals
-from django.core.mail import send_mail
 from Events.serializers import *
 from rest_framework.generics import RetrieveAPIView,ListAPIView
 
@@ -47,23 +46,6 @@ class ProfileView(ListAPIView):
             empty_event.append(u.event.title)
         joining = empty_event
         return Response({'id':user.id,'email':user.email,'event':joining})
-
-
-
-
-def create(self,validated_data):
-        user=super(UserSerializer,self).create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
-
-
-def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        user = UserSerializer.create(UserSerializer(), validated_data=user_data)
-        register_user= Profile.objects.create(user=user,**validated_data)
-        return register_user
-
 
 
 class RegisteredView(APIView):
@@ -107,16 +89,7 @@ def logout_users(request):
     return Response({'user':"LOGGED_OUT"}) 
 
 
-    def validate(self, attrs):
-        old_password=attrs.get('old_password')
-        password1=attrs.get('password1')
-        user=self.context.get('user')
-        if not authenticate(username=user.username, password = old_password):
-            raise serializers.ValidationError("Old password is wrong!!")
-        else:
-            user.set_password(password1)
-            user.save()
-        return attrs
+    
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
@@ -134,22 +107,7 @@ class ChangePasswordView(APIView):
 
     
 
-@receiver(reset_password_token_created)
-def password_reset(sender, instance, reset_password_token, *args, **kwargs):
 
-    email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
-
-    send_mail(
-        # title:
-        "Password Reset for {title}".format(title="reset password mail"),
-        # message:
-        email_plaintext_message,
-        # from:
-        "arorasanya352@gmail.com",
-        # to:
-        [reset_password_token.user.email]
-    )
-  
     
 
        

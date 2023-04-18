@@ -1,0 +1,24 @@
+# .gitignore
+# Python related files
+*.pyc
+*.pyo
+*.pyd
+_pycache_/
+
+# Django related files
+*.log
+*.pyc
+*.pyo
+*.pyd
+
+# Media files (e.g. uploaded by users)
+media/
+
+# Static files (e.g. collected static files)
+static/
+
+# Environment-related files
+.env
+
+# Other files/directories you want to ignore
+...
